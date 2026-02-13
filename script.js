@@ -1,4 +1,9 @@
 const CREATOR_NAME = "Divyansh Singh";
+const AURIX_IDENTITY = {
+  name: "Aurix",
+  role: "Intelligent Voice Agent",
+  purpose: "Assist users with information and simple tasks through voice interaction"
+};
 const button = document.getElementById("activateBtn");
 const status = document.getElementById("status");
 
@@ -20,6 +25,12 @@ recognition.onresult = (event) => {
 
   aurixReply(userSpeech);
 };
+else if (
+  message.toLowerCase().includes("who are you") ||
+  message.toLowerCase().includes("what are you")
+) {
+  reply = `I am ${AURIX_IDENTITY.name}, an ${AURIX_IDENTITY.role}. My purpose is to ${AURIX_IDENTITY.purpose}.`;
+}
 
 function aurixReply(message) {
   let reply = "I am not trained for that yet.";
@@ -40,7 +51,8 @@ function aurixReply(message) {
   ) {
     reply = `I was designed and built by ${CREATOR_NAME}.`;
   }
-
+let reply = "I am not trained for that yet, but I am learning.";
+  
   speak(reply);
 }
 
