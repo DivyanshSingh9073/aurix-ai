@@ -1,3 +1,4 @@
+const CREATOR_NAME = "Divyansh Singh";
 const button = document.getElementById("activateBtn");
 const status = document.getElementById("status");
 
@@ -31,6 +32,13 @@ function aurixReply(message) {
   }
   else if (message.toLowerCase().includes("your name")) {
     reply = "My name is Aurix. Intelligent Voice Agent.";
+  }
+  else if (
+    message.toLowerCase().includes("who made you") ||
+    message.toLowerCase().includes("who created you") ||
+    message.toLowerCase().includes("who built you")
+  ) {
+    reply = `I was designed and built by ${CREATOR_NAME}.`;
   }
 
   speak(reply);
