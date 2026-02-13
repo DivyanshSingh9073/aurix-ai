@@ -38,6 +38,10 @@ recognition.onend = () => {
   isListening = false;
   status.innerText = "Idle. Click Activate Aurix.";
 };
+recognition.onerror = (event) => {
+  isListening = false;
+  status.innerText = "Error: " + event.error;
+};
 function aurixReply(message) {
   let reply = "";
 
