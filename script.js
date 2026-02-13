@@ -6,6 +6,7 @@ const AURIX_IDENTITY = {
 };
 const button = document.getElementById("activateBtn");
 const status = document.getElementById("status");
+let isListening = false;
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -15,8 +16,16 @@ recognition.lang = "en-US";
 recognition.continuous = false;
 
 button.onclick = () => {
-  status.innerText = "Listening...";
+  // If already listening, do nothing
+  if (isListening) {
+    status.innerText = "Already listening...";
+    return;
+  }
+
+  // Start listening
+  status.innerText = "Listening... Speak now.";
   recognition.start();
+  isListening = true;
 };
 
 recognition.onresult = (event) => {
@@ -24,35 +33,44 @@ recognition.onresult = (event) => {
   status.innerText = "You said: " + userSpeech;
 
   aurixReply(userSpeech);
+}; 
+recognition.onend = () => {
+  isListening = false;
+  status.innerText = "Idle. Click Activate Aurix.";
 };
-else if (
-  message.toLowerCase().includes("who are you") ||
-  message.toLowerCase().includes("what are you")
-) {
-  reply = `I am ${AURIX_IDENTITY.name}, an ${AURIX_IDENTITY.role}. My purpose is to ${AURIX_IDENTITY.purpose}.`;
-}
-
 function aurixReply(message) {
-  let reply = "I am not trained for that yet.";
+  let reply = "";
 
-  if (message.toLowerCase().includes("hello")) {
+  const msg = message.toLowerCase(); // normalize input
+
+  if (msg.includes("hello") || msg.includes("hi")) {
     reply = "Hello. I am Aurix.";
-  } 
-  else if (message.toLowerCase().includes("time")) {
-    reply = "The current time is " + new Date().toLocaleTimeString();
   }
-  else if (message.toLowerCase().includes("your name")) {
+
+  else if (msg.includes("who are you") || msg.includes("what are you")) {
+    reply = `I am ${AURIX_IDENTITY.name}, an ${AURIX_IDENTITY.role}. My purpose is to ${AURIX_IDENTITY.purpose}.`;
+  }
+
+  else if (msg.includes("your name")) {
     reply = "My name is Aurix. Intelligent Voice Agent.";
   }
+
+  else if (msg.includes("time")) {
+    reply = "The current time is " + new Date().toLocaleTimeString();
+  }
+
   else if (
-    message.toLowerCase().includes("who made you") ||
-    message.toLowerCase().includes("who created you") ||
-    message.toLowerCase().includes("who built you")
+    msg.includes("who made you") ||
+    msg.includes("who created you") ||
+    msg.includes("who built you")
   ) {
     reply = `I was designed and built by ${CREATOR_NAME}.`;
   }
-let reply = "I am not trained for that yet, but I am learning.";
-  
+
+  else {
+    reply = "I am not trained for that yet, but I am learning.";
+  }
+
   speak(reply);
 }
 
