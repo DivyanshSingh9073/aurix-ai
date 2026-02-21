@@ -37,7 +37,7 @@ recognition.onresult = (event) => {
 }; 
 recognition.onend = () => {
   isListening = false;
-  status.innerText = "Idle. Click Activate Aurix.";
+  // ❌ DO NOT change status here
 };
 recognition.onerror = (event) => {
   isListening = false;
@@ -48,5 +48,8 @@ async function aurixReply(message) {
 
   const reply = await askAurixBrain(message);
 
-  speak(reply);
+  setTimeout(() => {
+    speak(reply);
+    status.innerText = "Idle. Click Activate Aurix.";
+  }, 300);
 }
