@@ -1,3 +1,4 @@
+import { askAurixBrain } from "./brain.js";
 const CREATOR_NAME = "Divyansh Singh";
 const AURIX_IDENTITY = {
   name: "Aurix",
@@ -42,7 +43,13 @@ recognition.onerror = (event) => {
   isListening = false;
   status.innerText = "Error: " + event.error;
 };
-function aurixReply(message) {
+async function aurixReply(message) {
+  status.innerText = "Aurix is thinking...";
+
+  const reply = await askAurixBrain(message);
+
+  speak(reply);
+}
   let reply = "";
 
   const msg = message.toLowerCase(); // normalize input
