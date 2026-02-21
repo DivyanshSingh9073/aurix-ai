@@ -8,7 +8,7 @@ const AURIX_IDENTITY = {
 const button = document.getElementById("activateBtn");
 const status = document.getElementById("status");
 let isListening = false;
-
+let audioUnlocked = false;
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -17,13 +17,19 @@ recognition.lang = "en-US";
 recognition.continuous = false;
 
 button.onclick = () => {
-  // If already listening, do nothing
+
+  // 🔓 Unlock audio on first user click (MOBILE FIX)
+  if (!audioUnlocked) {
+    const unlock = new SpeechSynthesisUtterance(" ");
+    window.speechSynthesis.speak(unlock);
+    audioUnlocked = true;
+  }
+
   if (isListening) {
     status.innerText = "Already listening...";
     return;
   }
 
-  // Start listening
   status.innerText = "Listening... Speak now.";
   recognition.start();
   isListening = true;
@@ -52,4 +58,16 @@ async function aurixReply(message) {
     speak(reply);
     status.innerText = "Idle. Click Activate Aurix.";
   }, 300);
+}
+function speak(text) {
+  if (!text) return;
+
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.lang = "en-US";
+  speech.rate = 1;
+  speech.pitch = 1;
+
+  // 🔑 Mobile + Chrome fix
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(speech);
 }
