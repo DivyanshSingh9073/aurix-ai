@@ -1,22 +1,42 @@
-// This is Aurix's brain (API-like logic)
-
 export async function askAurixBrain(message) {
-  // Fake thinking delay (like real AI)
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  const API_URL =
+    "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2";
 
-  const msg = message.toLowerCase();
+  const HF_TOKEN = "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";
 
-  if (msg.includes("time")) {
-    return "The current time is " + new Date().toLocaleTimeString();
+  const prompt = `
+You are Aurix, an intelligent voice assistant.
+You were built by Divyansh Singh.
+Reply in short, friendly sentences.
+
+User: ${message}
+Aurix:
+`;
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${HF_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          max_new_tokens: 80,
+          temperature: 0.7,
+        },
+      }),
+    });
+
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      return data[0].generated_text.replace(prompt, "").trim();
+    }
+
+    return "I am thinking, but something went wrong.";
+  } catch (error) {
+    return "I am having trouble connecting to my brain.";
   }
-
-  if (msg.includes("who built you") || msg.includes("creator")) {
-    return "I was created by Divyansh Singh.";
-  }
-
-  if (msg.includes("college")) {
-    return "College is the best time to build skills. Stay consistent.";
-  }
-
-  return "I am still learning. Ask me something else.";
 }
