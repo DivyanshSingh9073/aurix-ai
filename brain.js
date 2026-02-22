@@ -1,7 +1,5 @@
 export async function askAurixBrain(message) {
-  const API_URL =
-    "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2";
-
+  const API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small";
   const HF_TOKEN = "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";
 
   const prompt = `
@@ -21,7 +19,8 @@ Aurix:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        inputs: prompt,
+  inputs: message
+})
         parameters: {
           max_new_tokens: 80,
           temperature: 0.7,
