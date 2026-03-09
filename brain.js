@@ -2,7 +2,7 @@ export async function askAurixBrain(message) {
 
   const API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small";
 
-  const HF_TOKEN = "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";
+  const HF_TOKEN = "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";
 
   const prompt = `
 You are Aurix, an intelligent voice assistant built by Divyansh Singh.
