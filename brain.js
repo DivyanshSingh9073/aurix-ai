@@ -1,6 +1,6 @@
 export async function askAurixBrain(message) {
+
   const API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small";
-  const HF_TOKEN = "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";
 
   const prompt = `
 You are Aurix, an intelligent voice assistant.
@@ -12,30 +12,32 @@ Aurix:
 `;
 
   try {
+
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${HF_TOKEN}`,
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-  inputs: message
-})
+        inputs: prompt,
         parameters: {
           max_new_tokens: 80,
-          temperature: 0.7,
-        },
-      }),
+          temperature: 0.7
+        }
+      })
     });
 
     const data = await response.json();
 
-    if (Array.isArray(data)) {
-      return data[0].generated_text.replace(prompt, "").trim();
+    if (Array.isArray(data) && data[0]?.generated_text) {
+      let reply = data[0].generated_text.replace(prompt, "").trim();
+      return reply || "I am not sure how to answer that.";
     }
 
     return "I am thinking, but something went wrong.";
+
   } catch (error) {
+    console.error(error);
     return "I am having trouble connecting to my brain.";
   }
 }
