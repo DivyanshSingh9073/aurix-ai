@@ -34,7 +34,8 @@ export async function askAurixBrain(message) {
     return data.choices[0].message.content;
 
   } catch (error) {
-    console.error(error);
-    return "I am having trouble connecting to my brain.";
-  }
+  console.log("BRAIN ERROR:", error);
+  alert("Brain Error: " + error.message);
+  return "I am having trouble connecting to my brain.";
 }
+
