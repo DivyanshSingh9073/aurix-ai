@@ -1,42 +1,37 @@
 export async function askAurixBrain(message) {
 
-  const API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small";
-
-  const HF_TOKEN = "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";
-
-  const prompt = `
-You are Aurix, an intelligent voice assistant built by Divyansh Singh.
-Reply in short friendly sentences.
-
-User: ${message}
-Aurix:
-`;
+  const API_KEY = "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";
 
   try {
 
-    const response = await fetch(API_URL, {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${HF_TOKEN}`,
+        "Authorization": `Bearer ${API_KEY}`,
         "Content-Type": "application/json"
       },
+
       body: JSON.stringify({
-        inputs: prompt,
-        parameters: {
-          max_new_tokens: 80,
-          temperature: 0.7
-        }
+        model: "mistralai/mistral-7b-instruct:free",
+
+        messages: [
+          {
+            role: "system",
+            content: "You are Aurix, a smart voice assistant built by Divyansh Singh. Reply in short friendly sentences."
+          },
+
+          {
+            role: "user",
+            content: message
+          }
+        ]
       })
+
     });
 
     const data = await response.json();
 
-    if (Array.isArray(data) && data[0]?.generated_text) {
-      let reply = data[0].generated_text.replace(prompt, "").trim();
-      return reply || "I am not sure how to answer that.";
-    }
-
-    return "My brain is still loading.";
+    return data.choices[0].message.content;
 
   } catch (error) {
     console.error(error);
