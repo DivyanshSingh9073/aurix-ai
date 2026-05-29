@@ -1,5 +1,5 @@
 export async function askAurixBrain(message) {
-  const API_KEY = "AQ.Ab8RN6JPWbFADAN6iOenoCf7M7f1W7CBzet5rtcKFJcWWAg3sw"; // aistudio.google.com → Get API Key (free)
+  const API_KEY = "AQ.Ab8RN6JPWbFADAN6iOenoCf7M7f1W7CBzet5rtcKFJcWWAg3sw";
 
   try {
     const response = await fetch(
@@ -8,9 +8,7 @@ export async function askAurixBrain(message) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: message }]
-          }],
+          contents: [{ parts: [{ text: message }] }],
           systemInstruction: {
             parts: [{ text: "You are Aurix, a helpful and friendly AI voice assistant. Keep responses concise and conversational." }]
           }
@@ -19,10 +17,15 @@ export async function askAurixBrain(message) {
     );
 
     const data = await response.json();
+    
+    // Show raw response for debugging
+    if (!data.candidates) {
+      return "DEBUG: " + JSON.stringify(data);
+    }
+    
     return data.candidates[0].content.parts[0].text;
 
   } catch (error) {
-    console.error(error);
-    return "Sorry, I couldn't connect to my brain right now. Please try again.";
+    return "DEBUG ERROR: " + error.message;
   }
 }
