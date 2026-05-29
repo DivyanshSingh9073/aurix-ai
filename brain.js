@@ -1,5 +1,5 @@
 export async function askAurixBrain(message) {
-  const API_KEY = "AQ.Ab8RN6L-CKooJjOCOfufTJgbBscOKqzzV098hlCxBrfIMLzb-Q"; // aistudio.google.com → Get API Key (free)
+  const API_KEY = "AQ.Ab8RN6JPWbFADAN6iOenoCf7M7f1W7CBzet5rtcKFJcWWAg3sw"; // aistudio.google.com → Get API Key (free)
 
   try {
     const response = await fetch(
