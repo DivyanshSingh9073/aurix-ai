@@ -1,0 +1,710 @@
+/* ================================================================
+   Aurix AI — style.css
+   Author : Divyansh Singh
+   Design : Deep-space dark theme with cyan-violet accent system.
+            Signature element: animated hexagonal glyph + scan-line
+            gradient on the chat surface.
+   ================================================================ */
+
+/* ── 1. Design Tokens ── */
+:root {
+  /* Palette */
+  --bg-base:      #0a0a0f;   /* near-black */
+  --bg-surface:   #111118;   /* card / sidebar */
+  --bg-input:     #16161f;   /* input field */
+  --bg-message-ai:#13131c;   /* AI bubble bg */
+  --border:       #1e1e2e;   /* subtle dividers */
+
+  --cyan:         #00d4ff;   /* primary accent */
+  --violet:       #7b5ea7;   /* secondary accent */
+  --cyan-dim:     rgba(0, 212, 255, 0.12);
+  --cyan-glow:    rgba(0, 212, 255, 0.35);
+
+  --text-primary:   #e8e8f0;
+  --text-secondary: #8888a8;
+  --text-muted:     #55556a;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+
+  /* Radii */
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  18px;
+  --radius-xl:  24px;
+
+  /* Transitions */
+  --t-fast:  0.15s ease;
+  --t-base:  0.25s ease;
+  --t-slow:  0.4s ease;
+
+  /* Layout */
+  --sidebar-w: 260px;
+  --topbar-h:  56px;
+  --inputarea-h: 90px;
+}
+
+/* ── 2. Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;           /* prevent body scroll; chat area scrolls */
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button { cursor: pointer; border: none; background: none; font: inherit; }
+textarea { font: inherit; resize: none; border: none; outline: none; background: none; color: inherit; }
+a { color: var(--cyan); }
+
+/* ── 3. Scan-line texture (signature element) ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 212, 255, 0.015) 3px,
+    rgba(0, 212, 255, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── 4. Sidebar ── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 500;
+  transform: translateX(-100%);
+  transition: transform var(--t-slow);
+  will-change: transform;
+}
+
+.sidebar.open { transform: translateX(0); }
+
+/* On desktop (≥ 768 px), sidebar always visible */
+@media (min-width: 768px) {
+  .sidebar { transform: translateX(0); }
+  .sidebar-overlay { display: none !important; }
+  .main { margin-left: var(--sidebar-w); }
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 490;
+}
+.sidebar-overlay.visible { display: block; }
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+
+.brand-icon {
+  font-size: 1.4rem;
+  color: var(--cyan);
+  filter: drop-shadow(0 0 6px var(--cyan-glow));
+  animation: pulse-glyph 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glyph {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--cyan-glow)); }
+  50%       { filter: drop-shadow(0 0 14px var(--cyan-glow)); }
+}
+
+.sidebar-close {
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 4px;
+  transition: color var(--t-fast);
+}
+.sidebar-close:hover { color: var(--text-primary); }
+
+/* Desktop: hide close button */
+@media (min-width: 768px) { .sidebar-close { display: none; } }
+
+.new-chat-btn {
+  margin: 14px 12px 8px;
+  padding: 10px 14px;
+  background: var(--cyan-dim);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--cyan);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.new-chat-btn:hover {
+  background: rgba(0, 212, 255, 0.2);
+  border-color: rgba(0, 212, 255, 0.4);
+}
+.new-chat-btn span { font-size: 1.2rem; line-height: 1; }
+
+.chat-history-label {
+  padding: 10px 16px 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.chat-history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px;
+}
+.chat-history-list::-webkit-scrollbar { width: 3px; }
+.chat-history-list::-webkit-scrollbar-track { background: transparent; }
+.chat-history-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+.history-item {
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.history-item:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+}
+.sidebar-author {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+/* ── 5. Main layout ── */
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: margin-left var(--t-slow);
+  position: relative;
+}
+
+/* ── 6. Topbar ── */
+.topbar {
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-base);
+  position: relative;
+  z-index: 10;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.menu-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px;
+  color: var(--text-secondary);
+}
+.menu-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: var(--t-fast);
+}
+.menu-btn:hover { color: var(--text-primary); }
+
+/* Hide hamburger on desktop */
+@media (min-width: 768px) { .menu-btn { display: none; } }
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  flex: 1;
+  letter-spacing: 0.02em;
+}
+
+.brand-icon-sm {
+  color: var(--cyan);
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 5px var(--cyan-glow));
+}
+
+.clear-btn {
+  font-size: 1.1rem;
+  padding: 6px;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.clear-btn:hover {
+  color: #ff5c7a;
+  background: rgba(255, 92, 122, 0.1);
+}
+
+/* ── 7. Chat area ── */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 16px;
+  scroll-behavior: smooth;
+}
+.chat-area::-webkit-scrollbar { width: 4px; }
+.chat-area::-webkit-scrollbar-track { background: transparent; }
+.chat-area::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+
+/* Centre messages column */
+.messages {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── 8. Welcome screen ── */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60vh;
+  gap: 14px;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.welcome-glyph {
+  font-size: 4rem;
+  color: var(--cyan);
+  filter: drop-shadow(0 0 20px var(--cyan-glow));
+  animation: pulse-glyph 3s ease-in-out infinite, spin-slow 20s linear infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.welcome-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.01em;
+}
+
+.welcome-sub {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+.welcome-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
+  max-width: 400px;
+}
+
+.chip {
+  padding: 8px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.chip:hover {
+  background: var(--cyan-dim);
+  border-color: rgba(0, 212, 255, 0.3);
+  color: var(--cyan);
+}
+
+/* ── 9. Message bubbles ── */
+.message {
+  display: flex;
+  gap: 12px;
+  animation: slideUp 0.3s ease forwards;
+  max-width: 100%;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.message.user { flex-direction: row-reverse; }
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.message.ai .avatar {
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  color: #0a0a0f;
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.message.user .avatar {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.bubble {
+  max-width: calc(100% - 48px);
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  word-wrap: break-word;
+}
+
+.message.ai .bubble {
+  background: var(--bg-message-ai);
+  border: 1px solid var(--border);
+  border-top-left-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+.message.user .bubble {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(123, 94, 167, 0.12));
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-top-right-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+/* Code blocks inside messages */
+.bubble code {
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.82rem;
+  font-family: 'Courier New', monospace;
+  color: var(--cyan);
+}
+
+.bubble pre {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+.bubble pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #a8d8a8;
+}
+
+/* Message actions (copy / speak) */
+.message-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+
+.message:hover .message-actions { opacity: 1; }
+
+.msg-action-btn {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.msg-action-btn:hover {
+  color: var(--cyan);
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+/* ── 10. Typing / loading indicator ── */
+.typing-indicator {
+  display: flex;
+  gap: 5px;
+  padding: 14px 16px;
+  align-items: center;
+}
+
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: bounce-dot 1.2s infinite ease-in-out both;
+}
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%            { transform: scale(1);   opacity: 1; }
+}
+
+/* Typing animation cursor in text */
+.typing-cursor::after {
+  content: '▍';
+  display: inline-block;
+  color: var(--cyan);
+  animation: blink-cursor 0.8s steps(1) infinite;
+  margin-left: 2px;
+}
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── 11. Input area ── */
+.input-area {
+  flex-shrink: 0;
+  padding: 10px 16px 14px;
+  background: var(--bg-base);
+  border-top: 1px solid var(--border);
+}
+
+.input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 8px 8px 8px 16px;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+
+.input-row:focus-within {
+  border-color: rgba(0, 212, 255, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.07);
+}
+
+.chat-input {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+.chat-input::placeholder { color: var(--text-muted); }
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+
+.voice-btn {
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+}
+.voice-btn:hover {
+  color: var(--cyan);
+  background: var(--cyan-dim);
+}
+
+/* Pulsing ring when recording */
+.voice-btn.recording {
+  color: #ff5c7a;
+  background: rgba(255, 92, 122, 0.15);
+  animation: recording-ring 1s ease-in-out infinite;
+}
+@keyframes recording-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 92, 122, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(255, 92, 122, 0); }
+}
+
+.send-btn {
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  color: #0a0a0f;
+  box-shadow: 0 0 14px var(--cyan-glow);
+}
+.send-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 20px var(--cyan-glow);
+}
+.send-btn:active { transform: scale(0.96); }
+.send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.input-hint {
+  text-align: center;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 7px;
+}
+
+/* ── 12. TTS toggle button ── */
+.tts-toggle {
+  position: fixed;
+  bottom: 100px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  transition: background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+.tts-toggle:hover {
+  background: var(--cyan-dim);
+  border-color: rgba(0, 212, 255, 0.3);
+}
+.tts-toggle.active {
+  background: var(--cyan-dim);
+  border-color: rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 14px var(--cyan-glow);
+}
+
+/* ── 13. Toast ── */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 9px 18px;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-base), transform var(--t-base);
+  white-space: nowrap;
+  z-index: 9000;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── 14. Error message ── */
+.error-bubble {
+  background: rgba(255, 92, 122, 0.08) !important;
+  border-color: rgba(255, 92, 122, 0.25) !important;
+  color: #ff8fa3 !important;
+}
+
+/* ── 15. Utility animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── 16. Scrollbar for chat-area on webkit ── */
+.chat-area::-webkit-scrollbar { width: 4px; }
+.chat-area::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+
+/* ── 17. Safe area for mobile notches ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .input-area {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ── 18. Dark scrollbar for Firefox ── */
+* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
