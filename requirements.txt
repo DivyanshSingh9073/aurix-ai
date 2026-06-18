@@ -1,0 +1,20 @@
+# Aurix AI — backend dependencies
+# Install with:  pip install -r requirements.txt
+
+# Web framework
+flask==3.0.3
+
+# Cross-Origin Resource Sharing (allow frontend to call backend)
+flask-cors==4.0.1
+
+# Load environment variables from .env file
+python-dotenv==1.0.1
+
+# Anthropic Claude SDK (used when AI_PROVIDER=anthropic)
+anthropic==0.29.0
+
+# OpenAI SDK (used when AI_PROVIDER=openai) — optional
+openai==1.35.3
+
+# Production WSGI server (used on Render / any Linux host)
+gunicorn==22.0.0

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="description" content="Aurix AI — Your voice-enabled AI assistant by Divyansh Singh" />
+  <title>Aurix AI</title>
+
+  <!-- Google Fonts: Space Grotesk (display) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ───────────────────────────── SIDEBAR ───────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-icon">⬡</span>
+        <span class="brand-name">Aurix AI</span>
+      </div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">✕</button>
+    </div>
+
+    <button class="new-chat-btn" id="newChatBtn">
+      <span>+</span> New Chat
+    </button>
+
+    <div class="chat-history-label">Recent</div>
+    <div class="chat-history-list" id="chatHistoryList">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-author">Built by Divyansh Singh</div>
+    </div>
+  </aside>
+
+  <!-- Overlay for sidebar on mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ───────────────────────────── MAIN ───────────────────────────── -->
+  <main class="main">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Open sidebar">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-brand">
+        <span class="brand-icon-sm">⬡</span>
+        <span>Aurix AI</span>
+      </div>
+      <button class="clear-btn" id="clearBtn" title="Clear chat">🗑</button>
+    </header>
+
+    <!-- Chat messages area -->
+    <section class="chat-area" id="chatArea">
+
+      <!-- Welcome screen (shown when chat is empty) -->
+      <div class="welcome" id="welcome">
+        <div class="welcome-glyph">⬡</div>
+        <h1 class="welcome-title">Aurix AI</h1>
+        <p class="welcome-sub">Your intelligent voice assistant.<br />Type or speak to begin.</p>
+        <div class="welcome-chips">
+          <button class="chip" data-prompt="What can you help me with?">What can you do?</button>
+          <button class="chip" data-prompt="Explain quantum computing in simple terms.">Explain quantum computing</button>
+          <button class="chip" data-prompt="Write a Python function to reverse a string.">Write Python code</button>
+          <button class="chip" data-prompt="Give me 5 productivity tips for students.">Productivity tips</button>
+        </div>
+      </div>
+
+      <!-- Messages are injected here -->
+      <div class="messages" id="messages"></div>
+
+    </section>
+
+    <!-- Input area -->
+    <footer class="input-area">
+      <div class="input-row">
+        <textarea
+          id="userInput"
+          class="chat-input"
+          placeholder="Message Aurix…"
+          rows="1"
+          aria-label="Message input"
+        ></textarea>
+
+        <!-- Voice button -->
+        <button class="icon-btn voice-btn" id="voiceBtn" title="Voice input" aria-label="Voice input">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+
+        <!-- Send button -->
+        <button class="icon-btn send-btn" id="sendBtn" title="Send message" aria-label="Send message">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+      <div class="input-hint">Aurix AI may make mistakes. Verify important information.</div>
+    </footer>
+
+  </main>
+
+  <!-- ──────────────── TTS TOGGLE (floating) ──────────────── -->
+  <button class="tts-toggle" id="ttsToggle" title="Toggle voice output" aria-label="Toggle voice output">
+    🔊
+  </button>
+
+  <!-- ──────────────── TOAST NOTIFICATION ──────────────── -->
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
